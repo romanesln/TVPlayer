@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:resize_mode="fit"
+        app:show_buffering="when_playing"
+        app:show_timeout="5000"
+        app:use_controller="true" />
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="32dp"
+        android:background="#99000000"
+        android:padding="12dp"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/delay_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="32dp"
+        android:background="#99000000"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_delay_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg"
+            android:focusable="true"
+            android:minWidth="64dp"
+            android:text="−"
+            android:textColor="@color/btn_text"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/txt_delay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="240dp"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_delay_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg"
+            android:focusable="true"
+            android:minWidth="64dp"
+            android:text="+"
+            android:textColor="@color/btn_text"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#99000000"
+        android:padding="16dp"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:visibility="gone" />
+</FrameLayout>

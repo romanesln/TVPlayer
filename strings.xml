@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TVPlayer</string>
+    <string name="waiting">En attente d\'une vidéo…\nDans Wholphin, choisis TVPlayer comme lecteur externe.</string>
+</resources>
