@@ -14,6 +14,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Préparer le projet Android
+        id: loc
+        run: |
+          echo "Fichiers à la racine du dépôt :"
+          ls -la
+          if [ -f TVPlayer.zip ]; then
+            echo "TVPlayer.zip trouvé : décompression"
+            mkdir -p _src
+            unzip -q TVPlayer.zip -d _src
+            f=$(find _src -name settings.gradle.kts | head -1)
+          else
+            f=$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)
+          fi
+          if [ -z "$f" ]; then
+            echo "ERREUR : projet introuvable. Téléverse TVPlayer.zip à la racine du dépôt."
+            exit 1
+          fi
+          d=$(dirname "$f")
+          if [ ! -f "$d/app/build.gradle.kts" ]; then
+            echo "ERREUR : le dossier app est absent (les fichiers ont été envoyés en vrac)."
+            echo "Téléverse TVPlayer.zip à la racine du dépôt."
+            exit 1
+          fi
+          echo "Projet trouvé dans : $d"
+          echo "dir=$d" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -24,17 +50,18 @@ jobs:
           gradle-version: "8.10.2"
 
       - name: Compiler l'APK
-        run: gradle assembleDebug --no-daemon
+        working-directory: ${{ steps.loc.outputs.dir }}
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
 
       - name: Conserver l'APK comme artefact
         uses: actions/upload-artifact@v4
         with:
           name: TVPlayer-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ steps.loc.outputs.dir }}/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Publier l'APK dans les Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: TVPlayer build ${{ github.run_number }}
-          files: app/build/outputs/apk/debug/app-debug.apk
+          files: ${{ steps.loc.outputs.dir }}/app/build/outputs/apk/debug/app-debug.apk
