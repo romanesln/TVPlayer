@@ -13,28 +13,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Préparer le projet Android
         id: loc
         run: |
           echo "Fichiers à la racine du dépôt :"
           ls -la
-          if [ -f TVPlayer.zip ]; then
-            echo "TVPlayer.zip trouvé : décompression"
+          # Choisit le zip envoyé le plus récemment (quel que soit son nom : "TVPlayer (1).zip", etc.)
+          best=""
+          bestt=0
+          for z in *.zip; do
+            [ -f "$z" ] || continue
+            t=$(git log -1 --format=%ct -- "$z")
+            t=${t:-0}
+            echo "Zip trouvé : $z (date de commit $t)"
+            if [ "$t" -ge "$bestt" ]; then best="$z"; bestt="$t"; fi
+          done
+          if [ -n "$best" ]; then
+            echo ">>> Zip utilisé : $best"
             mkdir -p _src
-            unzip -q TVPlayer.zip -d _src
+            unzip -q "$best" -d _src
             f=$(find _src -name settings.gradle.kts | head -1)
           else
             f=$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)
           fi
           if [ -z "$f" ]; then
-            echo "ERREUR : projet introuvable. Téléverse TVPlayer.zip à la racine du dépôt."
+            echo "ERREUR : projet introuvable. Téléverse le zip TVPlayer à la racine du dépôt."
             exit 1
           fi
           d=$(dirname "$f")
           if [ ! -f "$d/app/build.gradle.kts" ]; then
             echo "ERREUR : le dossier app est absent (les fichiers ont été envoyés en vrac)."
-            echo "Téléverse TVPlayer.zip à la racine du dépôt."
+            echo "Téléverse le zip TVPlayer à la racine du dépôt."
             exit 1
           fi
           echo "Projet trouvé dans : $d"
